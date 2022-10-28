@@ -30,6 +30,7 @@ const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
 
 const Main: NextPage = () => {
   const [errorMsg, setErrorMsg] = useState("");
+  const [playersSwapped, setPlayersSwapped] = useState(false);
   const [tournamentUrl, setTournamentUrl] = useState("");
   const [scoreToWin, setScoreToWin] = useState(2);
   const [matchIdx, setMatchIdx] = useState(0);
@@ -55,6 +56,7 @@ const Main: NextPage = () => {
   function onMatchSelected(match: MatchInfoModel) {
     setMatchIdx(gamesList!.findIndex((m) => m.id === match.id));
     setPlayerStates([...DEFAULT_PLAYER_STATE]);
+    setPlayersSwapped(false);
   }
 
   function onCharacterSelected(idx: number, characterName: string) {
@@ -109,6 +111,8 @@ const Main: NextPage = () => {
           };
         }),
       };
+
+      if (playersSwapped) scoreboard.players.reverse();
 
       const res = await fetch("/api/set-scoreboard", {
         method: "POST",
@@ -181,7 +185,11 @@ const Main: NextPage = () => {
                   />
                 </div>
               </div>
-              <div className="flex gap-10">
+              <div
+                className={`flex gap-10 ${
+                  playersSwapped ? "flex-row-reverse" : ""
+                }`}
+              >
                 <PlayerInfo
                   scoreToWin={scoreToWin}
                   player={matchInfo?.players[0]!}
@@ -194,6 +202,9 @@ const Main: NextPage = () => {
                   }
                   onScoreSelected={(score) => onScoreSelected(0, score)}
                 />
+                <Button onClick={() => setPlayersSwapped((x) => !x)}>
+                  {"<-->"}
+                </Button>
                 <PlayerInfo
                   scoreToWin={scoreToWin}
                   player={matchInfo?.players[1]!}
