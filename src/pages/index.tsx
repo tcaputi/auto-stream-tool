@@ -146,7 +146,7 @@ const Main: NextPage = () => {
             {errorMsg}
           </div>
         ) : null}
-        <div className="flex w-3/4 min-w-max flex-col gap-6 border p-8">
+        <div className="flex w-3/4 min-w-max flex-col gap-12 border p-8">
           <div className="flex gap-4">
             <TextInput
               className="flex-1"
@@ -158,7 +158,7 @@ const Main: NextPage = () => {
           </div>
           {loading ? <div className="text-gray-200">Loading...</div> : null}
           {gamesList && matchInfo ? (
-            <>
+            <div className="flex flex-col gap-6">
               <div className="flex gap-6">
                 <div className="flex-1">
                   <Dropdown
@@ -219,7 +219,7 @@ const Main: NextPage = () => {
                 />
               </div>
               <Button onClick={onSubmitUpdate}>Update Scoreboard</Button>
-            </>
+            </div>
           ) : null}
         </div>
       </div>
