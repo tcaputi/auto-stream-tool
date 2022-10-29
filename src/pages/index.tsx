@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
-import Dropdown from "../components/DropDown";
+import Dropdown from "../components/Dropdown";
 import {
   PlayerStateModel,
   GAMES_QUERY,
@@ -12,6 +12,7 @@ import {
   MatchInfoModel,
   CHARACTERS,
   ScoreboardInfo,
+  CharacterModel,
 } from "../shared";
 import PlayerInfo from "../components/PlayerInfo";
 
@@ -59,12 +60,14 @@ const Main: NextPage = () => {
     setPlayersSwapped(false);
   }
 
-  function onCharacterSelected(idx: number, characterName: string) {
+  function onCharacterSelected(idx: number, character: CharacterModel) {
     setPlayerStates((oldStates) => {
       const newStates = [...oldStates];
       const newState = {
         ...newStates[idx]!,
-        characterID: CHARACTERS.indexOf(characterName),
+        characterID: CHARACTERS.findIndex(
+          (char) => char.name === character.name
+        ),
       };
       newStates[idx] = newState;
       return newStates;
@@ -99,7 +102,7 @@ const Main: NextPage = () => {
         bestOfText: `Bo${scoreToWin * 2 - 1}`,
         players: matchInfo.players.map((player, i) => {
           const playerState = playerStates[i]!;
-          const characterName = CHARACTERS[playerState.characterID]!;
+          const characterName = CHARACTERS[playerState.characterID]!.name;
 
           return {
             name: player.tag,
