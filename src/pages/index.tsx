@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useState, KeyboardEvent, useRef } from "react";
 import { useLazyQuery } from "@apollo/client";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
@@ -30,6 +30,7 @@ const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
 ];
 
 const Main: NextPage = () => {
+  const submitRef = useRef<HTMLButtonElement | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [playersSwapped, setPlayersSwapped] = useState(false);
   const [tournamentUrl, setTournamentUrl] = useState("");
@@ -94,6 +95,7 @@ const Main: NextPage = () => {
 
   async function onSubmitUpdate() {
     try {
+      console.log("here");
       if (!matchInfo) throw new Error("Match not selected");
 
       const scoreboard: ScoreboardInfo = {
@@ -221,7 +223,9 @@ const Main: NextPage = () => {
                   onScoreSelected={(score) => onScoreSelected(1, score)}
                 />
               </div>
-              <Button onClick={onSubmitUpdate}>Update Scoreboard</Button>
+              <Button className="h-16 text-xl" onClick={onSubmitUpdate}>
+                Update Scoreboard
+              </Button>
             </div>
           ) : null}
         </div>
