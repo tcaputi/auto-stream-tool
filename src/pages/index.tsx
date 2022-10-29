@@ -13,8 +13,21 @@ import {
   CHARACTERS,
   ScoreboardInfo,
   CharacterModel,
+  CommentatorModel,
 } from "../shared";
 import PlayerInfo from "../components/PlayerInfo";
+import CommentatorInfo from "../components/CommentatorInfo";
+
+const DEFAULT_COMMENTATOR_STATE: CommentatorModel[] = [
+  {
+    name: "",
+    twitterHandle: "",
+  },
+  {
+    name: "",
+    twitterHandle: "",
+  },
+];
 
 const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
   {
@@ -30,14 +43,16 @@ const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
 ];
 
 const Main: NextPage = () => {
-  const submitRef = useRef<HTMLButtonElement | null>(null);
+  const [fetchGames, { loading, error, data }] = useLazyQuery(GAMES_QUERY);
   const [errorMsg, setErrorMsg] = useState("");
   const [playersSwapped, setPlayersSwapped] = useState(false);
   const [tournamentUrl, setTournamentUrl] = useState("");
   const [scoreToWin, setScoreToWin] = useState(2);
   const [matchIdx, setMatchIdx] = useState(0);
   const [playerStates, setPlayerStates] = useState([...DEFAULT_PLAYER_STATE]);
-  const [fetchGames, { loading, error, data }] = useLazyQuery(GAMES_QUERY);
+  const [commentatorStates, setCommentatorStates] = useState([
+    ...DEFAULT_COMMENTATOR_STATE,
+  ]);
   const gamesList = data ? gamesQueryToModel(data) : undefined;
   const matchInfo = gamesList ? gamesList[matchIdx] : undefined;
 
@@ -53,6 +68,24 @@ const Main: NextPage = () => {
     //TODO: paginated fetch
     fetchGames({ variables: { slug: urlMatches[1], page: 1, perPage: 999 } });
     setErrorMsg("");
+  }
+
+  function onCommentatorNameChange(idx: number, name: string): void {
+    setCommentatorStates((oldStates) => {
+      const newStates = [...oldStates];
+      const newState = { ...newStates[idx]!, name };
+      newStates[idx] = newState;
+      return newStates;
+    });
+  }
+
+  function onCommentatorTwitterChange(idx: number, twitter: string): void {
+    setCommentatorStates((oldStates) => {
+      const newStates = [...oldStates];
+      const newState = { ...newStates[idx]!, twitterHandle: twitter };
+      newStates[idx] = newState;
+      return newStates;
+    });
   }
 
   function onMatchSelected(match: MatchInfoModel) {
@@ -95,13 +128,13 @@ const Main: NextPage = () => {
 
   async function onSubmitUpdate() {
     try {
-      console.log("here");
       if (!matchInfo) throw new Error("Match not selected");
 
       const scoreboard: ScoreboardInfo = {
         tournamentName: matchInfo.tournamentName,
         roundName: matchInfo.roundName,
         bestOfText: `Bo${scoreToWin * 2 - 1}`,
+        commentators: commentatorStates,
         players: matchInfo.players.map((player, i) => {
           const playerState = playerStates[i]!;
           const characterName = CHARACTERS[playerState.characterID]!.name;
@@ -118,6 +151,7 @@ const Main: NextPage = () => {
       };
 
       if (playersSwapped) scoreboard.players.reverse();
+      console.log(scoreboard);
 
       const res = await fetch("/api/set-scoreboard", {
         method: "POST",
@@ -159,7 +193,25 @@ const Main: NextPage = () => {
               value={tournamentUrl}
               onChange={(event) => setTournamentUrl(event.target.value)}
             />
-            <Button onClick={onTournamentUrlSubmit}>Submit</Button>
+            <Button onClick={onTournamentUrlSubmit}>Submit / Refresh</Button>
+          </div>
+          <div className="flex flex-col gap-4">
+            <CommentatorInfo
+              idx={0}
+              commentator={commentatorStates[0]!}
+              onNameChange={(name) => onCommentatorNameChange(0, name)}
+              onTwitterHandleChange={(twitter) =>
+                onCommentatorTwitterChange(0, twitter)
+              }
+            />
+            <CommentatorInfo
+              idx={1}
+              commentator={commentatorStates[1]!}
+              onNameChange={(name) => onCommentatorNameChange(1, name)}
+              onTwitterHandleChange={(twitter) =>
+                onCommentatorTwitterChange(1, twitter)
+              }
+            />
           </div>
           {loading ? <div className="text-gray-200">Loading...</div> : null}
           {gamesList && matchInfo ? (

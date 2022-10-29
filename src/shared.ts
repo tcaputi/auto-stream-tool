@@ -1,5 +1,10 @@
 import { gql } from "@apollo/client";
 
+export interface CommentatorModel {
+  name: string;
+  twitterHandle: string;
+}
+
 export interface PlayerInfoModel {
   pronouns?: string;
   prefix?: string;
@@ -36,6 +41,7 @@ export interface CharacterModel {
 }
 
 export interface ScoreboardInfo {
+  commentators: CommentatorModel[];
   players: ScoreboardPlayerInfo[];
   bestOfText: string;
   roundName: string;
