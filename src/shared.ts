@@ -185,6 +185,7 @@ const GAMES_QUERY = gql`
 `;
 
 function gamesQueryToModel(res: any) {
+  console.log(res);
   const tournamentName = res.event.tournament.name;
 
   const games: MatchInfoModel[] = res.event.sets.nodes.map((set: any) => {

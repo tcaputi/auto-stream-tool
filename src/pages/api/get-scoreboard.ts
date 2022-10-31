@@ -11,7 +11,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
     const jsonPath = path.join(process.cwd(), "data", "app-vars.json");
     const appVars = await fs.readFile(jsonPath, "utf8");
-    res.status(200).json(appVars);
+    res.status(200).send(appVars);
   } catch (err) {
     res.status(500).json(err);
   }

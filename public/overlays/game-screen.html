@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultimate Game Overlay</title>
+
+    <style>
+        @font-face {
+            font-family: "Smash";
+            src: url('resources/fonts/FOT-RodinBokutohPro-UB.otf');
+        }
+        @font-face {
+          font-family: "RussoOne";
+          src: url('resources/fonts/russoone-regular.ttf')
+        }
+
+
+        body {
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            background: transparent;
+            padding: 0px;
+            margin: 0px;
+            color: white;
+            font-family: "RussoOne";
+            white-space: nowrap;
+        }
+
+        #logo {
+           left: 860px;
+           top: 10px;
+        }
+
+        .mirror {
+            transform: scaleX(-1);
+        }
+
+        .absol {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+
+
+        .scoreboardP1 {
+            position: absolute;
+            left: 210px;
+            top: -295px;
+        }
+
+        .scoreboardP2 {
+            position: absolute;
+            right: 750px;
+            top: -295px;
+        }
+
+        .rect {
+            width: 588px;
+            height: 63px;
+            top: 346px;
+            z-index: -10;
+            position: absolute;
+        }
+        #p1Color {
+            left: 161px;
+        }
+        #p2Color {
+            right: -375px;
+        }
+
+
+        .pCharacter {
+            position: absolute;
+            top: 0px;
+            width: 50px;
+            height: 50px;
+            opacity: 0;
+        }
+        #p1Character {
+            left: 240px;
+            top: 345px;
+        }
+        #p2Character {
+            right: -296px;
+            top: 345px;
+        }
+
+
+
+        .teamLogo {
+            position: absolute;
+            top: 295px;
+            width: 60px;
+            height: 60px;
+            opacity: 0;
+        }
+        #teamLogoP1 {
+            left: 8px;
+        }
+        #teamLogoP2 {
+            right: 8px;
+        }
+
+
+        .wrappers {
+            position: absolute;
+            width: 330px;
+            height: 54px;
+            line-height: 54px;
+            top: 1286px;
+            opacity: 0;
+            color: white;
+        }
+
+        #p1Wrapper {
+            left: 320px;
+            text-align: left;
+
+        }
+
+        #p2Wrapper {
+            right: -410px;
+            text-align: right;
+
+        }
+
+        .pronouns {
+            font-style: italic;
+        }
+
+        .scores {
+            position: absolute;
+            top: 200px;
+        }
+        #scoresP2 {
+            right: 35px;
+            transform: scaleX(-1);
+        }
+        .scoreTick {
+            position: absolute;
+            opacity: 0;
+        }
+        #win1P1 {
+            top: -320px;
+            left: 715px;
+            display: none;
+        }
+        #win2P1 {
+            top: -320px;
+            left: 740px;
+            display: none;
+        }
+        #win3P1 {
+            top: -320px;
+            left: 765px;
+            display: none;
+        }
+        #wlP1 {
+            top: -311px;
+            right: -382px;
+            transform: scale(0.545);
+        }
+        #win1P2 {
+            top: -320px;
+            right: -685px;
+            display: none;
+        }
+        #win2P2 {
+            top: -320px;
+            right: -710px;
+            display: none;
+        }
+        #win3P2 {
+            top: -320px;
+            right: -735px;
+            display: none;
+        }
+        #wlP2 {
+            top: -311px;
+            right: -351px;
+            transform: scale(0.545);
+        }
+
+        #overlayRound {
+            position: absolute;
+            left: 40px;
+            bottom: 70px;
+            opacity: 0;
+        }
+
+        #overlayFormat {
+            position: absolute;
+            left: 10px;
+            bottom: 70px;
+            opacity: 0;
+        }
+
+        #format {
+            position: absolute;
+            height:25px;
+            left: 155px;
+            top: -940px;
+            text-align: left;
+            font-family: "RussoOne";
+            font-size: 17px;
+            color: #000000;
+        }
+
+        #round {
+            position: absolute;
+            width: 122px;
+            height: 32px;
+            left: 56px;
+            top: -964px;
+            text-align: left;
+            font-family: "RussoOne";
+            color: #000000;
+        }
+
+        #bestOf {
+            position: absolute;
+            width: 155px;
+            height: 25px;
+            left: 83px;
+            top: -938px;
+            text-align: left;
+            font-family: "RussoOne";
+            font-size: 18px;
+            color: #000000;
+        }
+
+        #p1NScore {
+            position: absolute;
+            top: 990px;
+            left: 270px;
+            text-align: right;
+            opacity: 0;
+            width: 85px;
+            height: 85px;
+            letter-spacing: -5px;
+            color: #ffffff;
+            text-shadow: -4px 4px rgba(0,0,0, 0.8);
+        }
+
+        #p2NScore {
+            position: absolute;
+            top: 990px;
+            right: 825px;
+            text-align: right;
+            opacity: 0;
+            width: 85px;
+            height: 85px;
+            letter-spacing: -5px;
+            color: #ffffff;
+            text-shadow: -4px 4px rgba(0,0,0, 0.8);
+        }
+
+        #overlayCasters {
+            position: absolute;
+            right: 12px;
+            bottom: 50px;
+            opacity: 1;
+            transform: scale(1.1);
+            filter: drop-shadow(0px 0px 3px black);
+        }
+        #caster1 {
+            position: absolute;
+            bottom: 110px;
+        }
+        #caster2 {
+            position: absolute;
+            bottom: 50px;
+        }
+        .casterTextBox {
+            position: absolute;
+            width: 190px;
+            height: 36px;
+            right: 0px;
+            text-align: left;
+        }
+        .casterIcon {
+            height: 23px;
+            width: 22px;
+            fill: white;
+            transform: translate(3px, 2px);
+        }
+        .casterText {
+            font-size: 22px;
+            font-family: "RussoOne";
+        }
+
+        .casterTwitterBox {
+            position: absolute;
+            width: 190px;
+            height: 36px;
+            bottom: -60px;
+            right: 0px;
+            text-align: left;
+        }
+        .twitterIcon {
+            height: 20px;
+            width: 20px;
+            transform: translateY(3px);
+            fill: rgb(168, 168, 168);
+        }
+        .casterTwitchBox {
+            position: absolute;
+            width: 190px;
+            height: 36px;
+            bottom: -62px;
+            right: 0px;
+            text-align: left;
+        }
+        .twitchIcon {
+            height: 17px;
+            width: 17px;
+            fill: rgb(168, 168, 168);
+            transform: translateY(2px);
+        }
+        .socialText {
+            font-size: 18px;
+            font-family: "Smash";
+            color: rgb(168, 168, 168);
+        }
+
+
+
+        #introVid {
+            position: absolute;
+            top: 0px;
+        }
+
+
+        .pIntro {
+            position: absolute;
+            width: 500px;
+            height: 94px;
+            line-height: 74px;
+            bottom: 478px;
+            opacity: 0;
+            font-family: "RussoOne";
+        }
+
+        #p1Intro {
+            text-align: right;
+            left: 355px;
+            text-shadow: 0px 0px 20px;
+        }
+
+        #p2Intro {
+            text-align: left;
+            right: 355px;
+            text-shadow: 0px 0px 20px;
+        }
+
+
+        .textIntro {
+            position: absolute;
+            text-align: center;
+            opacity: 0;
+        }
+
+        #midTextIntro {
+            width: 1100px;
+            height: 74px;
+            left: 410px;
+            bottom: 498px;
+            font-family: "RussoOne";
+            line-height: 74px;
+            font-size: 110px;
+        }
+
+        #rtIntro {
+            line-height: 40px;
+            font-size: 48px;
+        }
+
+        #roundIntro {
+            left: 510px;
+            width: 900px;
+            height: 40px;
+            top: 406px;
+        }
+
+        #tNameIntro {
+            left: 510px;
+            width: 900px;
+            height: 40px;
+            bottom: 400px;
+        }
+
+        #introBG {
+            position: absolute;
+            width: 1920px;
+            height: 1080px;
+            top: 0px;
+            background-color: rgba(0, 0, 0, 0.50);
+        }
+
+        #superCoolInterrogation {
+            position: absolute;
+            height: 74px;
+            right: 520px;
+            font-family: "RussoOne";
+            line-height: 74px;
+            bottom: 500px;
+            font-size: 110px;
+            opacity: 0;
+        }
+
+        #overlayIntro {
+            opacity: 0;
+        }
+
+        #batteryP1 {
+          position: absolute;
+          width:auto;
+          height:auto;
+          left:356px;
+          top:950px;
+        }
+
+        #batteryP2 {
+          position: absolute;
+          width:auto;
+          height:auto;
+          left:1096px;
+          top:950px;
+        }
+    </style>
+</head>
+
+<body style="position: relative;">
+
+
+    <img class="absol" src="resources/images/overlay-namebar.png">
+
+    <div class="logo-info">
+
+        <img src="resources/images/overlay-reboot-logo.png" id="logo">
+
+    </div>
+
+    <div id="overlayRound">
+        <span id="round"></span>
+    </div>
+
+    <div id="overlayFormat">
+        <span id="bestOf"></span>
+        <span id="format"></span>
+    </div>
+
+    <div id="overlayP1" class="scoreboardP1">
+        <img class="sagaIcon" id="sagaIconP1">
+        <div class="pCharaMask">
+            <img id="p1Character" class="pCharacter">
+        </div>
+
+        <img id="teamLogoP1" class="teamLogo">
+
+        <span id="p1Wrapper" class="wrappers">
+            <span id="p1Team" class="teams"></span>
+            <span id="p1Name" class="names"></span>
+            <span id="p1Pron" class="pronouns"></span>
+        </span>
+    </div>
+
+    <div id="overlayP2" class="scoreboardP2">
+        <img class="sagaIcon" id="sagaIconP2">
+        <div class="pCharaMask">
+            <div class="absol">
+                <img id="p2Character" class="pCharacter"/>
+            </div>
+        </div>
+
+        <img id="teamLogoP2" class="teamLogo">
+
+        <span id="p2Wrapper" class="wrappers">
+            <span id="p2Team" class="teams"></span>
+            <span id="p2Name" class="names"></span>
+            <span id="p2Pron" class="pronouns"></span>
+        </span>
+    </div>
+
+    <div id="scoresP1" class="scores">
+        <div id="wlP1" class="scoreTick">
+            <img src="resources/images/WL-BG.png" class="absol">
+            <img class="absol" id="wlP1Text">
+        </div>
+    </div>
+
+    <div id="p1NScore">
+        <span id="p1NScore"></span>
+
+    </div>
+
+    <div id="p2NScore">
+        <span id="p2NScore"></span>
+
+    </div>
+
+    <img src="resources/images/battery/Battery-1.png" class="absol" id="batteryP1">
+    <img src="resources/images/battery/Battery-1.png" class="absol" id="batteryP2">
+
+    <div id="scoresP2" class="scores">
+
+        <div id="wlP2" class="scoreTick">
+            <img src="resources/images/WL-BG.png" class="absol">
+            <img class="absol mirror" id="wlP2Text">
+        </div>
+    </div>
+
+    <script>
+        function getSmallerFontSize(textElement) {
+            return (parseFloat(textElement.style.fontSize.slice(0, -2)) * .90) + 'px';
+        }
+
+        function resizeText(textEL) {
+            const childrens = textEL.children;
+            while (textEL.scrollWidth > textEL.offsetWidth) {
+                if (childrens.length > 0) {
+                    Array.from(childrens).forEach(function (child) {
+                        child.style.fontSize = getSmallerFontSize(child);
+                    });
+                } else {
+                    textEL.style.fontSize = getSmallerFontSize(textEL);
+                }
+            }
+        }
+
+        async function updateUI() {
+            const scoreboardData = await fetch("/api/get-scoreboard");
+            const scoreboardInfo = await scoreboardData.json();
+
+            //TODO: testing
+            document.getElementsByTagName('body')[0].style.backgroundColor = 'blue';
+
+            const roundWrapperEl = document.getElementById('overlayRound');
+            const roundEl = document.getElementById('round');
+
+            const formatWrapperEl = document.getElementById('overlayFormat')
+            const bestOfEl = document.getElementById('bestOf');
+
+
+            if (roundEl.textContent !== scoreboardInfo['roundName']) {
+                roundWrapperEl.style.opacity = '1';
+                roundEl.style.fontSize = '24px';
+                roundEl.textContent = scoreboardInfo['roundName'];
+                resizeText(roundEl);
+            }
+
+            if (bestOfEl.textContent !== scoreboardInfo['bestOfText']) {
+                formatWrapperEl.style.opacity = '1';
+                bestOfEl.style.fontSize = '22px';
+                bestOfEl.textContent = scoreboardInfo['bestOfText'];
+                resizeText(bestOfEl);
+            }
+
+            for (let i = 0; i < scoreboardInfo.players.length; i++) {
+                const wrapperEl = document.getElementById(`p${i + 1}Wrapper`);
+                const nameEl = document.getElementById(`p${i + 1}Name`);
+                const teamEl = document.getElementById(`p${i + 1}Team`);
+                const pronounsEl = document.getElementById(`p${i + 1}Pron`);
+
+
+                if (nameEl.textContent !== scoreboardInfo['players'][i]['name'] ||
+                    teamEl.textContent !== scoreboardInfo['players'][i]['team'] ||
+                    pronounsEl.textContent !== scoreboardInfo['players'][i]['pronouns']
+                ) {
+                    wrapperEl.style.opacity = '1';
+                    nameEl.style.fontSize = '40px';
+                    teamEl.style.fontSize = '20px';
+                    pronounsEl.style.fontSize = '20px';
+
+                    nameEl.textContent = scoreboardInfo['players'][i]['name'];
+                    teamEl.textContent = scoreboardInfo['players'][i]['team'];
+                    pronounsEl.textContent = scoreboardInfo['players'][i]['pronouns'];
+                    resizeText(wrapperEl);
+                }
+            }
+        }
+
+        (async function main() {
+            setInterval(updateUI, 1000);
+        })()
+    </script>
+
+</body>
+</html>

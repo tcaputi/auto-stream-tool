@@ -43,7 +43,8 @@ const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
 ];
 
 const Main: NextPage = () => {
-  const [fetchGames, { loading, error, data }] = useLazyQuery(GAMES_QUERY);
+  const [fetchGames, { loading, error, data, fetchMore }] =
+    useLazyQuery(GAMES_QUERY);
   const [errorMsg, setErrorMsg] = useState("");
   const [playersSwapped, setPlayersSwapped] = useState(false);
   const [tournamentUrl, setTournamentUrl] = useState("");
@@ -133,7 +134,7 @@ const Main: NextPage = () => {
       const scoreboard: ScoreboardInfo = {
         tournamentName: matchInfo.tournamentName,
         roundName: matchInfo.roundName,
-        bestOfText: `Bo${scoreToWin * 2 - 1}`,
+        bestOfText: `Best of ${scoreToWin * 2 - 1}`,
         commentators: commentatorStates,
         players: matchInfo.players.map((player, i) => {
           const playerState = playerStates[i]!;
@@ -176,110 +177,112 @@ const Main: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="mx-auto flex min-h-screen flex-col items-center gap-8 p-4">
+      <div className="mx-auto flex min-h-screen flex-col items-center gap-6 p-4">
         <h1 className="text-4xl font-extrabold leading-normal text-gray-200">
           Auto Stream Tool for Smash Ultimate
         </h1>
-        {errorMsg ? (
-          <div className="flex w-3/4 min-w-max bg-red-500 p-4 text-white">
-            {errorMsg}
-          </div>
-        ) : null}
-        <div className="flex w-3/4 min-w-max flex-col gap-12 border p-8">
-          <div className="flex gap-4">
-            <TextInput
-              className="flex-1"
-              label="Tournament Url"
-              value={tournamentUrl}
-              onChange={(event) => setTournamentUrl(event.target.value)}
-            />
-            <Button onClick={onTournamentUrlSubmit}>Submit / Refresh</Button>
-          </div>
-          <div className="flex flex-col gap-4">
-            <CommentatorInfo
-              idx={0}
-              commentator={commentatorStates[0]!}
-              onNameChange={(name) => onCommentatorNameChange(0, name)}
-              onTwitterHandleChange={(twitter) =>
-                onCommentatorTwitterChange(0, twitter)
-              }
-            />
-            <CommentatorInfo
-              idx={1}
-              commentator={commentatorStates[1]!}
-              onNameChange={(name) => onCommentatorNameChange(1, name)}
-              onTwitterHandleChange={(twitter) =>
-                onCommentatorTwitterChange(1, twitter)
-              }
-            />
-          </div>
-          {loading ? <div className="text-gray-200">Loading...</div> : null}
-          {gamesList && matchInfo ? (
-            <div className="flex flex-col gap-6">
-              <div className="flex gap-6">
-                <div className="flex-1">
-                  <Dropdown
-                    label="Game"
-                    options={gamesList}
-                    displayKey={(match) => match.id}
-                    displayValue={(match) =>
-                      `${match.players[0]!.tag} vs ${match.players[1]!.tag} (${
-                        match.roundName
-                      })`
-                    }
-                    value={matchInfo}
-                    onChange={onMatchSelected}
-                  />
-                </div>
-                <div className="w-24">
-                  <Dropdown
-                    label="Best of"
-                    options={[2, 3]}
-                    displayKey={(opt) => opt}
-                    displayValue={(opt) => (opt * 2 - 1).toString()}
-                    value={scoreToWin}
-                    onChange={(opt) => setScoreToWin(opt)}
-                  />
-                </div>
-              </div>
-              <div
-                className={`flex gap-10 ${
-                  playersSwapped ? "flex-row-reverse" : ""
-                }`}
-              >
-                <PlayerInfo
-                  scoreToWin={scoreToWin}
-                  player={matchInfo?.players[0]!}
-                  playerState={playerStates[0]!}
-                  onCharacterSelected={(characterName) =>
-                    onCharacterSelected(0, characterName)
-                  }
-                  onCharacterAltSelected={(characterAltID) =>
-                    onCharacterAltSelected(0, characterAltID)
-                  }
-                  onScoreSelected={(score) => onScoreSelected(0, score)}
-                />
-                <Button onClick={() => setPlayersSwapped((x) => !x)}>
-                  {"<-->"}
-                </Button>
-                <PlayerInfo
-                  scoreToWin={scoreToWin}
-                  player={matchInfo?.players[1]!}
-                  playerState={playerStates[1]!}
-                  onCharacterSelected={(characterName) =>
-                    onCharacterSelected(1, characterName)
-                  }
-                  onCharacterAltSelected={(characterAltID) =>
-                    onCharacterAltSelected(1, characterAltID)
-                  }
-                  onScoreSelected={(score) => onScoreSelected(1, score)}
-                />
-              </div>
-              <Button className="h-16 text-xl" onClick={onSubmitUpdate}>
-                Update Scoreboard
-              </Button>
+        <div className="flex w-3/4 min-w-max max-w-6xl flex-col gap-4">
+          {errorMsg || error ? (
+            <div className="flex bg-red-500 p-4 text-white">
+              {errorMsg || error?.message}
             </div>
           ) : null}
+          <div className="flex flex-col gap-12 border p-8">
+            <div className="flex gap-4">
+              <TextInput
+                className="flex-1"
+                label="Tournament Url"
+                value={tournamentUrl}
+                onChange={(event) => setTournamentUrl(event.target.value)}
+              />
+              <Button onClick={onTournamentUrlSubmit}>Submit / Refresh</Button>
+            </div>
+            <div className="flex flex-col gap-4">
+              <CommentatorInfo
+                idx={0}
+                commentator={commentatorStates[0]!}
+                onNameChange={(name) => onCommentatorNameChange(0, name)}
+                onTwitterHandleChange={(twitter) =>
+                  onCommentatorTwitterChange(0, twitter)
+                }
+              />
+              <CommentatorInfo
+                idx={1}
+                commentator={commentatorStates[1]!}
+                onNameChange={(name) => onCommentatorNameChange(1, name)}
+                onTwitterHandleChange={(twitter) =>
+                  onCommentatorTwitterChange(1, twitter)
+                }
+              />
+            </div>
+            {loading ? <div className="text-gray-200">Loading...</div> : null}
+            {gamesList && matchInfo ? (
+              <div className="flex flex-col gap-6">
+                <div className="flex gap-6">
+                  <div className="flex-1">
+                    <Dropdown
+                      label="Game"
+                      options={gamesList}
+                      displayKey={(match) => match.id}
+                      displayValue={(match) =>
+                        `${match.players[0]!.tag} vs ${
+                          match.players[1]!.tag
+                        } (${match.roundName})`
+                      }
+                      value={matchInfo}
+                      onChange={onMatchSelected}
+                    />
+                  </div>
+                  <div className="w-24">
+                    <Dropdown
+                      label="Best of"
+                      options={[2, 3]}
+                      displayKey={(opt) => opt}
+                      displayValue={(opt) => (opt * 2 - 1).toString()}
+                      value={scoreToWin}
+                      onChange={(opt) => setScoreToWin(opt)}
+                    />
+                  </div>
+                </div>
+                <div
+                  className={`flex gap-10 ${
+                    playersSwapped ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <PlayerInfo
+                    scoreToWin={scoreToWin}
+                    player={matchInfo?.players[0]!}
+                    playerState={playerStates[0]!}
+                    onCharacterSelected={(characterName) =>
+                      onCharacterSelected(0, characterName)
+                    }
+                    onCharacterAltSelected={(characterAltID) =>
+                      onCharacterAltSelected(0, characterAltID)
+                    }
+                    onScoreSelected={(score) => onScoreSelected(0, score)}
+                  />
+                  <Button onClick={() => setPlayersSwapped((x) => !x)}>
+                    {"<-->"}
+                  </Button>
+                  <PlayerInfo
+                    scoreToWin={scoreToWin}
+                    player={matchInfo?.players[1]!}
+                    playerState={playerStates[1]!}
+                    onCharacterSelected={(characterName) =>
+                      onCharacterSelected(1, characterName)
+                    }
+                    onCharacterAltSelected={(characterAltID) =>
+                      onCharacterAltSelected(1, characterAltID)
+                    }
+                    onScoreSelected={(score) => onScoreSelected(1, score)}
+                  />
+                </div>
+                <Button className="h-16 text-xl" onClick={onSubmitUpdate}>
+                  Update Scoreboard
+                </Button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
