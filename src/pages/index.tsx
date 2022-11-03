@@ -71,6 +71,18 @@ const Main: NextPage = () => {
     setErrorMsg("");
   }
 
+  function onGameMenuOpen() {
+    const urlMatches = tournamentUrl.match(
+      /^https:\/\/www.start.gg\/(tournament\/[a-zA-Z0-9-_]*\/event\/[a-zA-Z0-9-_]*).*$/
+    );
+    if (!urlMatches) {
+      return;
+    }
+
+    /* refresh the list of games when the user opens the menu */
+    fetchGames({ variables: { slug: urlMatches[1], page: 1, perPage: 999 } });
+  }
+
   function onCommentatorNameChange(idx: number, name: string): void {
     setCommentatorStates((oldStates) => {
       const newStates = [...oldStates];
@@ -224,16 +236,14 @@ const Main: NextPage = () => {
                       label="Game"
                       options={gamesList}
                       displayKey={(match) => match.id}
-                      displayValue={(match) => {
-                        console.log(match);
-                        console.log(0, match.players[0]!.tag);
-                        console.log(1, match.players[1]!.tag);
-                        return `${match.players[0]!.tag} vs ${
+                      displayValue={(match) =>
+                        `${match.players[0]!.tag} vs ${
                           match.players[1]!.tag
-                        } (${match.roundName})`;
-                      }}
+                        } (${match.roundName})`
+                      }
                       value={matchInfo}
                       onChange={onMatchSelected}
+                      onMenuOpen={onGameMenuOpen}
                     />
                   </div>
                   <div className="w-24">

@@ -8,6 +8,7 @@ interface DropdownProps<T> {
   displayKey: { (obj: T): string | number };
   value: T;
   onChange: { (value: T): void };
+  onMenuOpen?: { (): void };
 }
 
 function Dropdown<T>(props: DropdownProps<T>) {
@@ -16,7 +17,10 @@ function Dropdown<T>(props: DropdownProps<T>) {
       <Listbox.Label className="block text-sm font-medium text-gray-200">
         {props.label}
       </Listbox.Label>
-      <Listbox.Button className="flex w-full cursor-default justify-between rounded-md border border-gray-300 bg-white py-2 pl-3 pr-2 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+      <Listbox.Button
+        onClick={props.onMenuOpen}
+        className="flex w-full cursor-default justify-between rounded-md border border-gray-300 bg-white py-2 pl-3 pr-2 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+      >
         <span className="flex items-center">
           <span className="block truncate">
             {props.displayValue(props.value)}

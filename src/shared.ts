@@ -187,7 +187,6 @@ const GAMES_QUERY = gql`
 
 function gamesQueryToModel(res: any) {
   const tournamentName = res.event.tournament.name;
-  console.log(res.event.sets.nodes);
 
   const games: MatchInfoModel[] = res.event.sets.nodes
     .filter((set: any) => !set.winnerId)
