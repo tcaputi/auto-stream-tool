@@ -224,11 +224,14 @@ const Main: NextPage = () => {
                       label="Game"
                       options={gamesList}
                       displayKey={(match) => match.id}
-                      displayValue={(match) =>
-                        `${match.players[0]!.tag} vs ${
+                      displayValue={(match) => {
+                        console.log(match);
+                        console.log(0, match.players[0]!.tag);
+                        console.log(1, match.players[1]!.tag);
+                        return `${match.players[0]!.tag} vs ${
                           match.players[1]!.tag
-                        } (${match.roundName})`
-                      }
+                        } (${match.roundName})`;
+                      }}
                       value={matchInfo}
                       onChange={onMatchSelected}
                     />

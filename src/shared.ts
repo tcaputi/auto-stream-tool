@@ -153,6 +153,7 @@ const GAMES_QUERY = gql`
         }
         nodes {
           id
+          winnerId
           fullRoundText # round
           stream {
             id
@@ -185,49 +186,61 @@ const GAMES_QUERY = gql`
 `;
 
 function gamesQueryToModel(res: any) {
-  console.log(res);
   const tournamentName = res.event.tournament.name;
+  console.log(res.event.sets.nodes);
 
-  const games: MatchInfoModel[] = res.event.sets.nodes.map((set: any) => {
-    const matchID = set.id;
-    const roundName = set.fullRoundText;
+  const games: MatchInfoModel[] = res.event.sets.nodes
+    .filter((set: any) => !set.winnerId)
+    .filter((set: any) => set.slots.every((slot: any) => !!slot.entrant))
+    .map((set: any) => {
+      const matchID = set.id;
+      const roundName = set.fullRoundText;
 
-    const players: PlayerInfoModel[] = set.slots.map((slot: any) => {
-      const tag = slot.entrant.participants[0].gamerTag;
-      const prefix = slot.entrant.participants[0].prefix ?? undefined;
-      const pronouns =
-        slot.entrant.participants[0].user.genderPronoun
-          ?.toLowerCase()
-          .replace(/\s/g, "") ?? undefined;
-      const twitterHandle =
-        slot.entrant.participants[0].user.authorizations.find(
-          (service: any) => service.type === "TWITTER"
-        )?.externalUsername;
-      const twitchHandle =
-        slot.entrant.participants[0].user.authorizations.find(
-          (service: any) => service.type === "TWITCH"
-        )?.externalUsername;
+      const players: PlayerInfoModel[] = set.slots
+        .filter((slot: any) => slot.entrant.participants.length !== 0)
+        .filter((slot: any) => !!slot.entrant.participants[0].gamerTag)
+        .map((slot: any) => {
+          const tag = slot.entrant.participants[0].gamerTag;
+          const prefix = slot.entrant.participants[0].prefix ?? undefined;
+
+          let pronouns = "";
+          let twitterHandle = "";
+          let twitchHandle = "";
+          if (slot.entrant.participants[0].user) {
+            pronouns =
+              slot.entrant.participants[0].user.genderPronoun
+                ?.toLowerCase()
+                .replace(/\s/g, "") ?? undefined;
+            twitterHandle =
+              slot.entrant.participants[0].user.authorizations.find(
+                (service: any) => service.type === "TWITTER"
+              )?.externalUsername;
+            twitchHandle =
+              slot.entrant.participants[0].user.authorizations.find(
+                (service: any) => service.type === "TWITCH"
+              )?.externalUsername;
+          }
+
+          return {
+            pronouns,
+            prefix,
+            tag,
+            twitterHandle,
+            twitchHandle,
+          };
+        });
 
       return {
-        pronouns,
-        prefix,
-        tag,
-        twitterHandle,
-        twitchHandle,
+        id: matchID,
+        tournamentName,
+        roundName,
+        players,
+        playerStates: {
+          characterID: 0,
+          characterAltID: 0,
+        },
       };
     });
-
-    return {
-      id: matchID,
-      tournamentName,
-      roundName,
-      players,
-      playerStates: {
-        characterID: 0,
-        characterAltID: 0,
-      },
-    };
-  });
 
   return games;
 }
