@@ -45,7 +45,7 @@ const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
 const Main: NextPage = () => {
   const [fetchGames, { loading, error, data }] = useLazyQuery(GAMES_QUERY);
   const [errorMsg, setErrorMsg] = useState("");
-  const [allowFinished, setAllowFinished] = useState(true);
+  const [allowFinished, setAllowFinished] = useState(false);
   const [playersSwapped, setPlayersSwapped] = useState(false);
   const [tournamentUrl, setTournamentUrl] = useState("");
   const [scoreToWin, setScoreToWin] = useState(2);

@@ -564,7 +564,7 @@
                 const pronounsEl = document.getElementById(`p${i + 1}Pron`);
                 const scoreEl = document.getElementById(`batteryP${i + 1}`);
                 const playerInfo = scoreboardInfo['players'][i];
-                const color = i === 0 ? 'Blue' : 'Red';
+                const color = i === 0 ? 'Red' : 'Blue';
                 const scoreImgPath = `resources/images/battery/Battery-${scoreboardInfo['bestOf']}-${color}-${playerInfo['score']}.png`;
 
                 if (nameEl.textContent !== playerInfo['name'] ||
