@@ -260,6 +260,7 @@
         }
         .casterTextBox {
             position: absolute;
+            bottom: -90px;
             width: 370px;
             height: 69px;
             text-align: center;
@@ -278,9 +279,10 @@
             position: absolute;
             width: 280px;
             height: 45px;
-            bottom: -112px;
+            bottom: -125px;
             right: 0px;
             text-align: center;
+            color: black;
         }
         .twitterIcon {
             height: 20px;
@@ -556,7 +558,7 @@
         const scoreboardInfo = await scoreboardData.json();
 
         //TODO: testing
-        // document.getElementsByTagName('body')[0].style.backgroundColor = 'blue';
+        document.getElementsByTagName('body')[0].style.backgroundColor = 'blue';
 
         const roundWrapperEl = document.getElementById('overlayRound');
         const roundEl = document.getElementById('round');
@@ -571,10 +573,9 @@
             resizeText(roundEl);
         }
 
-        if (bestOfEl.textContent !== scoreboardInfo['bestOfText']) {
-            //formatWrapperEl.style.opacity = '1';
+        if (bestOfEl.textContent !== scoreboardInfo['bestOf']) {
             bestOfEl.style.fontSize = '22px';
-            bestOfEl.textContent = scoreboardInfo['bestOfText'];
+            bestOfEl.textContent = `Best of ${scoreboardInfo['bestOf']}`;
             resizeText(bestOfEl);
         }
 

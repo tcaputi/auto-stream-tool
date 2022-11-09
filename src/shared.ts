@@ -43,7 +43,7 @@ export interface CharacterModel {
 export interface ScoreboardInfo {
   commentators: CommentatorModel[];
   players: ScoreboardPlayerInfo[];
-  bestOfText: string;
+  bestOf: number;
   roundName: string;
   tournamentName: string;
 }
@@ -185,11 +185,13 @@ const GAMES_QUERY = gql`
   }
 `;
 
-function gamesQueryToModel(res: any) {
+function gamesQueryToModel(res: any, allowFinished: boolean) {
   const tournamentName = res.event.tournament.name;
 
+  console.log("here", allowFinished);
+
   const games: MatchInfoModel[] = res.event.sets.nodes
-    .filter((set: any) => !set.winnerId)
+    .filter((set: any) => !set.winnerId || allowFinished)
     .filter((set: any) => set.slots.every((slot: any) => !!slot.entrant))
     .map((set: any) => {
       const matchID = set.id;

@@ -550,10 +550,10 @@
                 resizeText(roundEl);
             }
 
-            if (bestOfEl.textContent !== scoreboardInfo['bestOfText']) {
+            if (bestOfEl.textContent !== scoreboardInfo['bestOf']) {
                 formatWrapperEl.style.opacity = '1';
                 bestOfEl.style.fontSize = '22px';
-                bestOfEl.textContent = scoreboardInfo['bestOfText'];
+                bestOfEl.textContent = `Best of ${scoreboardInfo['bestOf']}`;
                 resizeText(bestOfEl);
             }
 
@@ -562,21 +562,28 @@
                 const nameEl = document.getElementById(`p${i + 1}Name`);
                 const teamEl = document.getElementById(`p${i + 1}Team`);
                 const pronounsEl = document.getElementById(`p${i + 1}Pron`);
+                const scoreEl = document.getElementById(`batteryP${i + 1}`);
+                const playerInfo = scoreboardInfo['players'][i];
+                const color = i === 0 ? 'Blue' : 'Red';
+                const scoreImgPath = `resources/images/battery/Battery-${scoreboardInfo['bestOf']}-${color}-${playerInfo['score']}.png`;
 
-
-                if (nameEl.textContent !== scoreboardInfo['players'][i]['name'] ||
-                    teamEl.textContent !== scoreboardInfo['players'][i]['team'] ||
-                    pronounsEl.textContent !== scoreboardInfo['players'][i]['pronouns']
+                if (nameEl.textContent !== playerInfo['name'] ||
+                    teamEl.textContent !== playerInfo['team'] ||
+                    pronounsEl.textContent !== playerInfo['pronouns']
                 ) {
                     wrapperEl.style.opacity = '1';
                     nameEl.style.fontSize = '40px';
                     teamEl.style.fontSize = '20px';
                     pronounsEl.style.fontSize = '20px';
 
-                    nameEl.textContent = scoreboardInfo['players'][i]['name'];
-                    teamEl.textContent = scoreboardInfo['players'][i]['team'];
-                    pronounsEl.textContent = scoreboardInfo['players'][i]['pronouns'];
+                    nameEl.textContent = playerInfo['name'];
+                    teamEl.textContent = playerInfo['team'];
+                    pronounsEl.textContent = playerInfo['pronouns'];
                     resizeText(wrapperEl);
+                }
+
+                if (scoreEl.src !== scoreImgPath) {
+                    scoreEl.src = scoreImgPath;
                 }
             }
         }

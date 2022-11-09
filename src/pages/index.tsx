@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState, KeyboardEvent, useRef } from "react";
+import { useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
@@ -43,9 +43,9 @@ const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
 ];
 
 const Main: NextPage = () => {
-  const [fetchGames, { loading, error, data, fetchMore }] =
-    useLazyQuery(GAMES_QUERY);
+  const [fetchGames, { loading, error, data }] = useLazyQuery(GAMES_QUERY);
   const [errorMsg, setErrorMsg] = useState("");
+  const [allowFinished, setAllowFinished] = useState(true);
   const [playersSwapped, setPlayersSwapped] = useState(false);
   const [tournamentUrl, setTournamentUrl] = useState("");
   const [scoreToWin, setScoreToWin] = useState(2);
@@ -54,7 +54,7 @@ const Main: NextPage = () => {
   const [commentatorStates, setCommentatorStates] = useState([
     ...DEFAULT_COMMENTATOR_STATE,
   ]);
-  const gamesList = data ? gamesQueryToModel(data) : undefined;
+  const gamesList = data ? gamesQueryToModel(data, allowFinished) : undefined;
   const matchInfo = gamesList ? gamesList[matchIdx] : undefined;
 
   function onTournamentUrlSubmit() {
@@ -99,6 +99,10 @@ const Main: NextPage = () => {
       newStates[idx] = newState;
       return newStates;
     });
+  }
+
+  function onAllowFinishedToggled() {
+    setAllowFinished((old) => !old);
   }
 
   function onMatchSelected(match: MatchInfoModel) {
@@ -146,7 +150,7 @@ const Main: NextPage = () => {
       const scoreboard: ScoreboardInfo = {
         tournamentName: matchInfo.tournamentName,
         roundName: matchInfo.roundName,
-        bestOfText: `Best of ${scoreToWin * 2 - 1}`,
+        bestOf: scoreToWin * 2 - 1,
         commentators: commentatorStates,
         players: matchInfo.players.map((player, i) => {
           const playerState = playerStates[i]!;
@@ -200,14 +204,27 @@ const Main: NextPage = () => {
             </div>
           ) : null}
           <div className="flex flex-col gap-12 border p-8">
-            <div className="flex gap-4">
-              <TextInput
-                className="flex-1"
-                label="Tournament Url"
-                value={tournamentUrl}
-                onChange={(event) => setTournamentUrl(event.target.value)}
-              />
-              <Button onClick={onTournamentUrlSubmit}>Submit / Refresh</Button>
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-4">
+                <TextInput
+                  className="flex-1"
+                  label="Tournament Url"
+                  value={tournamentUrl}
+                  onChange={(event) => setTournamentUrl(event.target.value)}
+                />
+                <Button onClick={onTournamentUrlSubmit}>
+                  Submit / Refresh
+                </Button>
+              </div>
+              <div className="flex items-center gap-4 text-white">
+                <label htmlFor="allow-finished">Show finished games</label>
+                <input
+                  id="allow-finished"
+                  checked={allowFinished}
+                  onChange={onAllowFinishedToggled}
+                  type="checkbox"
+                />
+              </div>
             </div>
             <div className="flex flex-col gap-4">
               <CommentatorInfo
@@ -264,7 +281,7 @@ const Main: NextPage = () => {
                 >
                   <PlayerInfo
                     scoreToWin={scoreToWin}
-                    player={matchInfo?.players[0]!}
+                    player={matchInfo!.players[0]!}
                     playerState={playerStates[0]!}
                     onCharacterSelected={(characterName) =>
                       onCharacterSelected(0, characterName)
@@ -279,7 +296,7 @@ const Main: NextPage = () => {
                   </Button>
                   <PlayerInfo
                     scoreToWin={scoreToWin}
-                    player={matchInfo?.players[1]!}
+                    player={matchInfo!.players[1]!}
                     playerState={playerStates[1]!}
                     onCharacterSelected={(characterName) =>
                       onCharacterSelected(1, characterName)
