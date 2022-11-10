@@ -43,7 +43,9 @@ const DEFAULT_PLAYER_STATE: PlayerStateModel[] = [
 ];
 
 const Main: NextPage = () => {
-  const [fetchGames, { loading, error, data }] = useLazyQuery(GAMES_QUERY);
+  const [fetchGames, { loading, error, data }] = useLazyQuery(GAMES_QUERY, {
+    fetchPolicy: "no-cache",
+  });
   const [errorMsg, setErrorMsg] = useState("");
   const [allowFinished, setAllowFinished] = useState(false);
   const [playersSwapped, setPlayersSwapped] = useState(false);
@@ -244,7 +246,9 @@ const Main: NextPage = () => {
                 }
               />
             </div>
-            {loading ? <div className="text-gray-200">Loading...</div> : null}
+            {loading && !matchInfo ? (
+              <div className="text-gray-200">Loading...</div>
+            ) : null}
             {gamesList && matchInfo ? (
               <div className="flex flex-col gap-6">
                 <div className="flex gap-6">

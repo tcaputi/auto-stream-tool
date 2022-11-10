@@ -188,8 +188,6 @@ const GAMES_QUERY = gql`
 function gamesQueryToModel(res: any, allowFinished: boolean) {
   const tournamentName = res.event.tournament.name;
 
-  console.log("here", allowFinished);
-
   const games: MatchInfoModel[] = res.event.sets.nodes
     .filter((set: any) => !set.winnerId || allowFinished)
     .filter((set: any) => set.slots.every((slot: any) => !!slot.entrant))
