@@ -163,7 +163,7 @@ const Main: NextPage = () => {
             pronouns: player.pronouns ?? "",
             team: player.prefix ?? "",
             character: characterName,
-            skin: `${characterName} (${playerState.characterAltID})`,
+            skin: `${characterName} (${playerState.characterAltID + 1})`,
             score: playerState.score,
           };
         }),

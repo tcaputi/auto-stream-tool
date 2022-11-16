@@ -557,9 +557,6 @@
         const scoreboardData = await fetch("/api/get-scoreboard");
         const scoreboardInfo = await scoreboardData.json();
 
-        //TODO: testing
-        document.getElementsByTagName('body')[0].style.backgroundColor = 'blue';
-
         const roundWrapperEl = document.getElementById('overlayRound');
         const roundEl = document.getElementById('round');
 
@@ -592,9 +589,7 @@
                 casterTwitterEl.textContent !== scoreboardInfo['commentators'][i]['twitterHandle']
             ) {
                 nameWrapperEl.style.opacity = '1';
-                //casterNameEl.style.fontSize = '40px';
                 twitterWrapperEl.style.opacity = '1';
-                //casterTwitterEl.style.fontSize = '40px';
 
                 casterNameEl.textContent = scoreboardInfo['commentators'][i]['name'];
                 casterTwitterEl.textContent = scoreboardInfo['commentators'][i]['twitterHandle'];
