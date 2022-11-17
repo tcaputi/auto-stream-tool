@@ -532,6 +532,7 @@
         async function updateUI() {
             const scoreboardData = await fetch("/api/get-scoreboard");
             const scoreboardInfo = await scoreboardData.json();
+            const roundText = scoreboardInfo['roundName'].replace('Winners', 'W.').replace(/losers/i, 'L.')
 
             const roundWrapperEl = document.getElementById('overlayRound');
             const roundEl = document.getElementById('round');
@@ -539,11 +540,10 @@
             const formatWrapperEl = document.getElementById('overlayFormat')
             const bestOfEl = document.getElementById('bestOf');
 
-
-            if (roundEl.textContent !== scoreboardInfo['roundName']) {
+            if (roundEl.textContent !== roundText) {
                 roundWrapperEl.style.opacity = '1';
                 roundEl.style.fontSize = '24px';
-                roundEl.textContent = scoreboardInfo['roundName'];
+                roundEl.textContent = roundText;
                 resizeText(roundEl);
             }
 
