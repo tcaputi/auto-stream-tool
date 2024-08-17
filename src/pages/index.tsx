@@ -18,6 +18,9 @@ import {
 import PlayerInfo from "../components/PlayerInfo";
 import CommentatorInfo from "../components/CommentatorInfo";
 
+const PAGE_IDX = 1;
+const PER_PAGE = 999;
+
 const DEFAULT_COMMENTATOR_STATE: CommentatorModel[] = [
   {
     name: "",
@@ -69,7 +72,9 @@ const Main: NextPage = () => {
     }
 
     //TODO: paginated fetch
-    fetchGames({ variables: { slug: urlMatches[1], page: 1, perPage: 999 } });
+    fetchGames({
+      variables: { slug: urlMatches[1], page: PAGE_IDX, perPage: PER_PAGE },
+    });
     setErrorMsg("");
   }
 
@@ -82,7 +87,9 @@ const Main: NextPage = () => {
     }
 
     /* refresh the list of games when the user opens the menu */
-    fetchGames({ variables: { slug: urlMatches[1], page: 1, perPage: 999 } });
+    fetchGames({
+      variables: { slug: urlMatches[1], page: PAGE_IDX, perPage: PER_PAGE },
+    });
   }
 
   function onCommentatorNameChange(idx: number, name: string): void {

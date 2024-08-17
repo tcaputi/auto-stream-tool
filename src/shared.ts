@@ -155,9 +155,6 @@ const GAMES_QUERY = gql`
           id
           winnerId
           fullRoundText # round
-          stream {
-            id
-          }
           slots {
             id
             entrant {
@@ -167,15 +164,6 @@ const GAMES_QUERY = gql`
                 id
                 prefix # prefixes
                 gamerTag # gamer tag
-                user {
-                  id
-                  genderPronoun # pronouns
-                  authorizations {
-                    id
-                    type # twitter, twitch, etc
-                    externalUsername # username
-                  }
-                }
               }
             }
           }
@@ -188,6 +176,8 @@ const GAMES_QUERY = gql`
 function gamesQueryToModel(res: any, allowFinished: boolean) {
   const tournamentName = res.event.tournament.name;
 
+  console.log(res);
+
   const games: MatchInfoModel[] = res.event.sets.nodes
     .filter((set: any) => !set.winnerId || allowFinished)
     .filter((set: any) => set.slots.every((slot: any) => !!slot.entrant))
@@ -199,33 +189,22 @@ function gamesQueryToModel(res: any, allowFinished: boolean) {
         .filter((slot: any) => slot.entrant.participants.length !== 0)
         .filter((slot: any) => !!slot.entrant.participants[0].gamerTag)
         .map((slot: any) => {
-          const tag = slot.entrant.participants[0].gamerTag;
-          const prefix = slot.entrant.participants[0].prefix ?? undefined;
+          const tag: string = slot.entrant.participants[0].gamerTag;
+          const prefix: string | undefined =
+            slot.entrant.participants[0].prefix ?? undefined;
 
           let pronouns = "";
-          let twitterHandle = "";
-          let twitchHandle = "";
           if (slot.entrant.participants[0].user) {
             pronouns =
               slot.entrant.participants[0].user.genderPronoun
                 ?.toLowerCase()
                 .replace(/\s/g, "") ?? undefined;
-            twitterHandle =
-              slot.entrant.participants[0].user.authorizations.find(
-                (service: any) => service.type === "TWITTER"
-              )?.externalUsername;
-            twitchHandle =
-              slot.entrant.participants[0].user.authorizations.find(
-                (service: any) => service.type === "TWITCH"
-              )?.externalUsername;
           }
 
           return {
             pronouns,
             prefix,
             tag,
-            twitterHandle,
-            twitchHandle,
           };
         });
 
